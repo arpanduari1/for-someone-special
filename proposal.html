@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Will You Be My Valentine?</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --blush-pink: #FFB6C1;
+            --blush-pink-light: #FFD4DC;
+            --champagne-gold: #F4E4C1;
+            --soft-white: #FFF8F0;
+            --text-dark: #4A4A4A;
+            --text-light: #6B6B6B;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            /* ADDED: Scroll snap for main container */
+            scroll-snap-type: y mandatory;
+            overflow-y: scroll;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--soft-white);
+            color: var(--text-dark);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Section Base Styles */
+        section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 24px;
+            position: relative;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+            /* ADDED: Scroll snap alignment */
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+        }
+
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Typography */
+        h1,
+        h2,
+        h3 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: clamp(2rem, 6vw, 3rem);
+            margin-bottom: 1.5rem;
+        }
+
+        h3 {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            margin-bottom: 1rem;
+        }
+
+        p {
+            font-size: clamp(1rem, 3vw, 1.125rem);
+            line-height: 1.8;
+            font-weight: 300;
+            color: var(--text-light);
+            max-width: 600px;
+        }
+
+        /* Music Toggle Button */
+        .music-toggle {
+            position: fixed;
+            bottom: 32px;
+            right: 24px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--blush-pink), var(--blush-pink-light));
+            border: none;
+            box-shadow: 0 4px 20px rgba(255, 182, 193, 0.4);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .music-toggle:active {
+            transform: scale(0.95);
+        }
+
+        .music-toggle svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        .music-toggle.playing {
+            box-shadow: 0 4px 30px rgba(255, 182, 193, 0.6);
+        }
+
+        /* Hero Section */
+        #hero {
+            background: linear-gradient(135deg, var(--soft-white) 0%, var(--blush-pink-light) 100%);
+            text-align: center;
+        }
+
+        .hero-name {
+            color: var(--blush-pink);
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease 0.3s both;
+        }
+
+        .hero-subtitle {
+            font-style: italic;
+            animation: fadeInUp 1s ease 0.6s both;
+        }
+
+        /* Beginning Section */
+        #beginning {
+            background: var(--soft-white);
+            text-align: center;
+        }
+
+        /* Why You Matter Section */
+        #why-you-matter {
+            background: linear-gradient(to bottom, var(--soft-white), var(--champagne-gold));
+            padding: 80px 24px;
+        }
+
+        .why-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 48px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .why-card {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .why-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .why-card img {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            border-radius: 16px;
+            margin-bottom: 20px;
+        }
+
+        .why-card p {
+            text-align: center;
+            margin: 0 auto;
+        }
+
+        /* Emotional Reflection Section */
+        #reflection {
+            background: linear-gradient(135deg, var(--champagne-gold) 0%, var(--blush-pink-light) 100%);
+            text-align: center;
+        }
+
+        /* Photo Pause Section */
+        #photo-pause {
+            background: var(--soft-white);
+            padding: 80px 0;
+        }
+
+        .gallery-container {
+            width: 100%;
+            max-width: 500px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .gallery-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .photo-gallery {
+            display: flex;
+            gap: 16px;
+            padding: 0 24px;
+        }
+
+        .gallery-item {
+            flex: 0 0 85%;
+            height: 400px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Build-Up Section */
+        #build-up {
+            background: linear-gradient(to bottom, var(--soft-white), var(--blush-pink-light));
+            text-align: center;
+        }
+
+        /* Proposal Section */
+        #proposal {
+            background: linear-gradient(135deg, var(--blush-pink-light) 0%, var(--blush-pink) 100%);
+            text-align: center;
+        }
+
+        .proposal-question {
+            font-size: clamp(2rem, 6vw, 3.5rem);
+            color: white;
+            margin-bottom: 2rem;
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .button-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .yes-button {
+            background: white;
+            color: var(--blush-pink);
+            border: none;
+            padding: 18px 48px;
+            font-size: 1.25rem;
+            font-weight: 500;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            font-family: 'Playfair Display', serif;
+        }
+
+        .yes-button:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 6px 30px rgba(255, 182, 193, 0.4);
+        }
+
+        .yes-button:active {
+            transform: translateY(0) scale(1);
+        }
+
+        .of-course-button {
+            background: linear-gradient(135deg, var(--champagne-gold), #EFD9A8);
+            color: var(--text-dark);
+            border: none;
+            padding: 18px 48px;
+            font-size: 1.25rem;
+            font-weight: 500;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(244, 228, 193, 0.5);
+            font-family: 'Playfair Display', serif;
+        }
+
+        .of-course-button:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 6px 30px rgba(244, 228, 193, 0.6);
+        }
+
+        .of-course-button:active {
+            transform: translateY(0) scale(1);
+        }
+
+        /* After Yes Section */
+        #after-yes {
+            background: linear-gradient(135deg, var(--champagne-gold) 0%, var(--blush-pink-light) 50%, var(--blush-pink) 100%);
+            text-align: center;
+            display: none;
+        }
+
+        #after-yes.show {
+            display: flex;
+        }
+
+        .celebration-text {
+            color: white;
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .hearts-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+            overflow: hidden;
+        }
+
+        .heart {
+            position: absolute;
+            bottom: -50px;
+            font-size: 2rem;
+            animation: floatUp 5s ease-in infinite;
+            opacity: 0;
+        }
+
+        @keyframes floatUp {
+            0% {
+                opacity: 0;
+                transform: translateY(0) rotate(0deg);
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-100vh) rotate(360deg);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Start Screen */
+        #start-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--blush-pink-light) 0%, var(--blush-pink) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        #start-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .start-content {
+            text-align: center;
+            padding: 24px;
+        }
+
+        .start-title {
+            font-size: clamp(2rem, 6vw, 3rem);
+            color: white;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .start-subtitle {
+            font-size: clamp(1rem, 3vw, 1.25rem);
+            color: white;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .start-button {
+            background: white;
+            color: var(--blush-pink);
+            border: none;
+            padding: 18px 48px;
+            font-size: 1.25rem;
+            font-weight: 500;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            font-family: 'Playfair Display', serif;
+        }
+
+        .start-button:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 6px 30px rgba(255, 255, 255, 0.3);
+        }
+
+        .start-button:active {
+            transform: translateY(0) scale(1);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            section {
+                padding: 40px 20px;
+            }
+
+            .gallery-item {
+                flex: 0 0 90%;
+                height: 350px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Start Screen -->
+    <div id="start-screen">
+        <div class="start-content">
+            <h1 class="start-title">A Special Message</h1>
+            <p class="start-subtitle">Click below to begin</p>
+            <button class="start-button" onclick="startExperience()">Start ✨</button>
+        </div>
+    </div>
+
+    <!-- Music Toggle -->
+    <button id="musicToggle" class="music-toggle" onclick="toggleMusic()">
+        <svg id="playIcon" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z" />
+        </svg>
+        <svg id="pauseIcon" viewBox="0 0 24 24" style="display: none;">
+            <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+        </svg>
+    </button>
+
+    <!-- Hearts Container -->
+    <div id="heartsContainer" class="hearts-container"></div>
+
+    <!-- Hero Section -->
+    <section id="hero">
+        <h1 class="hero-name">Dear Maitri ❤️</h1>
+        <p class="hero-subtitle">This is the beginning of something beautiful...</p>
+    </section>
+
+    <!-- Beginning Section -->
+    <section id="beginning">
+        <h2>Where It All Started</h2>
+        <p style="text-align: center;">
+            It all began with a simple, unexpected message from a classmate — something small that quietly changed my
+            world.
+            Later, when I saw you in class, a gentle feeling grew inside me. At first it was just a like… but that like
+            slowly
+            turned into something deeper. Since 2021, not a day has passed when you haven't lived in my thoughts —
+            growing silently, patiently, into a love that keeps becoming stronger with time.
+        </p>
+    </section>
+
+    <!-- Why You Matter Section -->
+    <section id="why-you-matter">
+        <h2 style="text-align: center; margin-bottom: 3rem;">Why You're Everything</h2>
+        <div class="why-cards">
+            <div class="why-card">
+                <img src="https://ik.imagekit.io/vtt81avmk/first-maitri-image.jpg" alt="Your laugh">
+                <p>This was the first moment I noticed you — just a simple picture on my screen, yet somehow it became
+                    the beginning of a feeling I never expected.</p>
+            </div>
+            <div class="why-card">
+                <img src="https://ik.imagekit.io/vtt81avmk/flower-smile(2).jpg" alt="Your smile">
+                <p>Your smile lights up even my darkest days. It's the first thing I think about when I wake up.</p>
+            </div>
+            <div class="why-card">
+                <img src="https://ik.imagekit.io/vtt81avmk/maitri-blessing.jpg" alt="Your kindness">
+                <p>You may not realize it, but your simple, carefree moments have a way of leaving a lasting warmth in
+                    my heart.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Emotional Reflection Section -->
+    <section id="reflection">
+        <h2>What You Mean to Me</h2>
+        <p style="text-align: center; max-width: 500px;">
+            It all began with a small mistake — a simple message during the quiet days of covid —
+            and somehow that moment changed my world. From seeing you in class, to those
+            everyday glimpses from the bus, watching you laugh with your friends under the tree,
+            my feelings grew slowly and honestly.
+            <br><br>
+            Over the years, you became more than just a classmate to me. You became the reason
+            I tried harder, learned more, and imagined a better future for myself. Loving you was
+            never about grand gestures; it lived in the small things — waiting to see you each day,
+            helping you whenever I could, and silently wishing to become someone worthy of
+            standing beside you.
+            <br><br>
+            From 2021 until today, life has changed many times, but one thing stayed constant —
+            the quiet place you hold in my heart.
+        </p>
+    </section>
+
+    <!-- Photo Pause Section -->
+    <section id="photo-pause">
+        <h2 style="text-align: center; margin-bottom: 2rem;">Our Moments Together</h2>
+        <div class="gallery-container">
+            <div class="photo-gallery">
+                <div class="gallery-item">
+                    <img src="https://ik.imagekit.io/vtt81avmk/WhatsApp%20Image%202026-02-14%20at%2004.08.14.jpeg"
+                        alt="Memory 1">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://ik.imagekit.io/vtt81avmk/WhatsApp%20Image%202026-02-14%20at%2004.08.13(1).jpeg"
+                        alt="Memory 2">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://ik.imagekit.io/vtt81avmk/WhatsApp%20Image%202026-02-14%20at%2004.08.13.jpeg"
+                        alt="Memory 3">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Build-Up Section -->
+    <section id="build-up">
+        <h2>I Can't Imagine My Future Without You</h2>
+        <p style="text-align: center; max-width: 500px;">
+            When I think about the future, I don’t imagine grand scenes —
+            I imagine simple, peaceful moments with you. Waking up and
+            seeing you beside me, sharing quiet mornings, laughing over
+            meals made with care, and building a life that feels warm and real.
+            <br><br>
+            I dream about the little things — walking close enough to feel
+            the gentle scent of your hair, sitting together after long days,
+            growing from who we are today into who we will become tomorrow.
+            From our younger selves to the older versions of us, I keep
+            hoping our paths move forward side by side.
+        </p>
+    </section>
+
+    <!-- Proposal Section -->
+    <section id="proposal">
+        <h2 class="proposal-question">Will You Be My Valentine? 💕</h2>
+        <div class="button-container">
+            <button class="yes-button" onclick="handleYes()">Yes! 💖</button>
+            <button class="of-course-button" onclick="handleYes()">Of course! 💕</button>
+        </div>
+    </section>
+
+    <!-- After Yes Section -->
+    <section id="after-yes">
+        <h1 class="celebration-text">You've Made Me The Happiest! 🎉</h1>
+        <p style="color: white; max-width: 500px; text-align: center;">
+            This is just the beginning of our beautiful journey together.
+            I promise to cherish every moment, every laugh, every adventure with you. ❤️
+        </p>
+    </section>
+
+    <script>
+        // ========================================
+        // CONFIGURATION - Replace with your songs
+        // ========================================
+        const SECTION_MUSIC = {
+            'hero': 'https://cdn.jsdelivr.net/gh/arpanduari1/songs/Raabta-final.mp3',
+            'beginning': 'https://cdn.jsdelivr.net/gh/arpanduari1/songs/Pehla-Nasha-final.mp3',
+            'why-you-matter': 'https://cdn.jsdelivr.net/gh/arpanduari1/songs/Tere-Sang-Yaara-final.mp3',
+            'reflection': 'https://cdn.jsdelivr.net/gh/arpanduari1/songs/Agar-Tum-Saath-Ho-final.mp3',
+            'photo-pause': 'https://cdn.jsdelivr.net/gh/arpanduari1/songs/Kho-Gaye-Hum-Kahan-final.mp3',
+            'build-up': 'https://cdn.jsdelivr.net/gh/arpanduari1/songs/Dil-Ke-Paas-final.mp3',
+            'proposal': 'https://cdn.jsdelivr.net/gh/arpanduari1/songs/Janam-Janam-final.mp3',
+            'after-yes': 'https://cdn.jsdelivr.net/gh/arpanduari1/songs/Dil-Diyan-Gallan-final.mp3'
+        };
+
+        // ========================================
+        // STATE
+        // ========================================
+        let currentAudio = null;
+        let nextAudio = null;
+        let isPlaying = false;
+        let currentSection = null;
+        let hasStarted = false;
+        let isCrossfading = false; // ADDED: Prevent concurrent crossfades
+
+        // ========================================
+        // MUSIC SYSTEM
+        // ========================================
+        function preloadAudio(url) {
+            const audio = new Audio(url);
+            audio.preload = 'auto';
+            audio.loop = true;
+            audio.volume = 0;
+            return audio;
+        }
+
+        function crossfadeToSection(sectionId) {
+            if (!hasStarted || !isPlaying) return;
+            if (currentSection === sectionId) return; // FIXED: Already on this section
+            if (isCrossfading) return; // FIXED: Don't start new crossfade if one is in progress
+
+            const newMusicUrl = SECTION_MUSIC[sectionId];
+            if (!newMusicUrl) return;
+
+            console.log(`Crossfading to section: ${sectionId}`); // Debug log
+
+            // FIXED: Update current section immediately to prevent duplicate calls
+            const previousSection = currentSection;
+            currentSection = sectionId;
+            isCrossfading = true;
+
+            // Preload next audio
+            nextAudio = preloadAudio(newMusicUrl);
+
+            // Start next audio
+            nextAudio.play().then(() => {
+                // Crossfade
+                const fadeTime = 2000;
+                const steps = 50;
+                const interval = fadeTime / steps;
+                let step = 0;
+
+                const fadeInterval = setInterval(() => {
+                    step++;
+                    const progress = step / steps;
+
+                    if (currentAudio) {
+                        currentAudio.volume = Math.max(0, 1 - progress);
+                    }
+                    nextAudio.volume = Math.min(1, progress);
+
+                    if (step >= steps) {
+                        clearInterval(fadeInterval);
+                        // FIXED: Stop and clean up old audio properly
+                        if (currentAudio) {
+                            currentAudio.pause();
+                            currentAudio.currentTime = 0;
+                            currentAudio = null;
+                        }
+                        currentAudio = nextAudio;
+                        nextAudio = null;
+                        isCrossfading = false;
+                    }
+                }, interval);
+            }).catch(err => {
+                console.log('Audio play failed:', err);
+                isCrossfading = false;
+                currentSection = previousSection; // Revert on error
+            });
+        }
+
+        function toggleMusic() {
+            if (!hasStarted) return;
+
+            const toggle = document.getElementById('musicToggle');
+            const playIcon = document.getElementById('playIcon');
+            const pauseIcon = document.getElementById('pauseIcon');
+
+            if (isPlaying) {
+                // Pause
+                if (currentAudio) currentAudio.pause();
+                isPlaying = false;
+                toggle.classList.remove('playing');
+                playIcon.style.display = 'block';
+                pauseIcon.style.display = 'none';
+            } else {
+                // Play
+                if (!currentAudio) {
+                    currentAudio = preloadAudio(SECTION_MUSIC[currentSection || 'hero']);
+                }
+                currentAudio.volume = 1;
+                currentAudio.play().catch(err => console.log('Audio play failed:', err));
+                isPlaying = true;
+                toggle.classList.add('playing');
+                playIcon.style.display = 'none';
+                pauseIcon.style.display = 'block';
+            }
+        }
+
+        // ========================================
+        // SCROLL DETECTION - IMPROVED
+        // ========================================
+        let scrollTimeout;
+        let lastActiveSection = null;
+
+        function detectActiveSection() {
+            const sections = document.querySelectorAll('section');
+            const windowHeight = window.innerHeight;
+            let activeSection = null;
+            let maxVisibility = 0;
+
+            sections.forEach(section => {
+                const rect = section.getBoundingClientRect();
+                const visibleHeight = Math.min(rect.bottom, windowHeight) - Math.max(rect.top, 0);
+                const visibilityRatio = visibleHeight / windowHeight;
+
+                if (visibilityRatio > maxVisibility) {
+                    maxVisibility = visibilityRatio;
+                    activeSection = section;
+                }
+            });
+
+            // FIXED: Only trigger music change when the most visible section changes
+            if (activeSection && activeSection !== lastActiveSection) {
+                const sectionId = activeSection.id;
+                if (sectionId && SECTION_MUSIC[sectionId]) {
+                    console.log(`Active section changed to: ${sectionId}`); // Debug log
+                    crossfadeToSection(sectionId);
+                    lastActiveSection = activeSection;
+                }
+            }
+        }
+
+        function handleScroll() {
+            const sections = document.querySelectorAll('section');
+            const whyCards = document.querySelectorAll('.why-card');
+            const windowHeight = window.innerHeight;
+            const triggerPoint = windowHeight * 0.75;
+
+            // Section fade-in
+            sections.forEach(section => {
+                const sectionTop = section.getBoundingClientRect().top;
+                if (sectionTop < triggerPoint) {
+                    section.classList.add('visible');
+                }
+            });
+
+            // Why cards stagger
+            whyCards.forEach((card, index) => {
+                const cardTop = card.getBoundingClientRect().top;
+                if (cardTop < triggerPoint) {
+                    setTimeout(() => {
+                        card.classList.add('visible');
+                    }, index * 200);
+                }
+            });
+
+            // FIXED: Debounce section detection to avoid rapid-fire changes
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(detectActiveSection, 150);
+        }
+
+        // ========================================
+        // PROPOSAL HANDLING
+        // ========================================
+        function handleYes() {
+            const proposalSection = document.getElementById('proposal');
+            const afterYesSection = document.getElementById('after-yes');
+
+            // Hide proposal section
+            proposalSection.style.display = 'none';
+
+            // Show after yes section
+            afterYesSection.classList.add('show');
+            afterYesSection.classList.add('visible');
+
+            // Trigger music change
+            crossfadeToSection('after-yes');
+
+            // Create hearts animation
+            createHearts();
+
+            // Scroll to after yes section
+            setTimeout(() => {
+                afterYesSection.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        }
+
+        function createHearts() {
+            const container = document.getElementById('heartsContainer');
+            const hearts = ['💕', '💖', '💗', '💝', '💓', '💞'];
+
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.className = 'heart';
+                    heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                    heart.style.left = Math.random() * 100 + '%';
+                    heart.style.animationDelay = '0s';
+                    heart.style.animationDuration = (3 + Math.random() * 2) + 's';
+                    container.appendChild(heart);
+
+                    // Remove after animation
+                    setTimeout(() => heart.remove(), 5000);
+                }, i * 150);
+            }
+        }
+
+        // ========================================
+        // START EXPERIENCE
+        // ========================================
+        function startExperience() {
+            hasStarted = true;
+            const startScreen = document.getElementById('start-screen');
+            startScreen.classList.add('hidden');
+
+            // Initialize first section
+            currentSection = 'hero';
+            lastActiveSection = document.getElementById('hero');
+            currentAudio = preloadAudio(SECTION_MUSIC['hero']);
+            currentAudio.volume = 1;
+
+            // Auto-play music (will work on mobile after user interaction)
+            currentAudio.play().then(() => {
+                isPlaying = true;
+                const toggle = document.getElementById('musicToggle');
+                toggle.classList.add('playing');
+                document.getElementById('playIcon').style.display = 'none';
+                document.getElementById('pauseIcon').style.display = 'block';
+            }).catch(err => {
+                console.log('Autoplay prevented - user can click music button');
+            });
+
+            // Show first section
+            document.getElementById('hero').classList.add('visible');
+        }
+
+        // ========================================
+        // INITIALIZE
+        // ========================================
+        window.addEventListener('scroll', handleScroll);
+        window.addEventListener('load', () => {
+            handleScroll();
+        });
+
+        // Mobile gallery scroll snap
+        const gallery = document.querySelector('.gallery-container');
+        if (gallery) {
+            gallery.addEventListener('scroll', () => {
+                const items = document.querySelectorAll('.gallery-item');
+                items.forEach(item => {
+                    const rect = item.getBoundingClientRect();
+                    const galleryRect = gallery.getBoundingClientRect();
+                    const itemCenter = rect.left + rect.width / 2;
+                    const galleryCenter = galleryRect.left + galleryRect.width / 2;
+                    const distance = Math.abs(itemCenter - galleryCenter);
+                    const scale = Math.max(0.9, 1 - distance / 1000);
+                    item.style.transform = `scale(${scale})`;
+                    item.style.transition = 'transform 0.3s ease';
+                });
+            });
+        }
+    </script>
+</body>
+
+</html>
