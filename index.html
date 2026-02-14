@@ -772,7 +772,7 @@
 
             // FIXED: Debounce section detection to avoid rapid-fire changes
             clearTimeout(scrollTimeout);
-            scrollTimeout = setTimeout(detectActiveSection, 150);
+            scrollTimeout = setTimeout(detectActiveSection, 100);
         }
 
         // ========================================
@@ -848,6 +848,7 @@
 
             // Show first section
             document.getElementById('hero').classList.add('visible');
+            setTimeout(detectActiveSection, 500);
         }
 
         // ========================================
