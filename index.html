@@ -736,9 +736,9 @@
             });
 
             // FIXED: Only trigger music change when the most visible section changes
-            if (activeSection && activeSection !== lastActiveSection) {
+            if (activeSection) {
                 const sectionId = activeSection.id;
-                if (sectionId && SECTION_MUSIC[sectionId]) {
+                if (sectionId && sectionId !== lastActiveSection) {
                     console.log(`Active section changed to: ${sectionId}`); // Debug log
                     crossfadeToSection(sectionId);
                     lastActiveSection = activeSection;
@@ -831,7 +831,7 @@
 
             // Initialize first section
             currentSection = 'hero';
-            lastActiveSection = document.getElementById('hero');
+            lastActiveSection = 'hero';
             currentAudio = preloadAudio(SECTION_MUSIC['hero']);
             currentAudio.volume = 1;
 
@@ -856,8 +856,9 @@
         // ========================================
         window.addEventListener('scroll', handleScroll);
         window.addEventListener('load', () => {
+            lastActiveSection = null;
             handleScroll();
-        });
+        }, 400);
 
         // Mobile gallery scroll snap
         const gallery = document.querySelector('.gallery-container');
